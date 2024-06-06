@@ -46,7 +46,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Doge"",
+                    ""name"": ""Dodge"",
                     ""type"": ""Button"",
                     ""id"": ""ed216332-5431-4e94-8d35-0a1b1471c1cb"",
                     ""expectedControlType"": ""Button"",
@@ -83,7 +83,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Doge"",
+                    ""action"": ""Dodge"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -140,7 +140,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
         m_CharacterControls = asset.FindActionMap("CharacterControls", throwIfNotFound: true);
         m_CharacterControls_ChangeLine = m_CharacterControls.FindAction("ChangeLine", throwIfNotFound: true);
         m_CharacterControls_Jump = m_CharacterControls.FindAction("Jump", throwIfNotFound: true);
-        m_CharacterControls_Doge = m_CharacterControls.FindAction("Doge", throwIfNotFound: true);
+        m_CharacterControls_Dodge = m_CharacterControls.FindAction("Dodge", throwIfNotFound: true);
         m_CharacterControls_Trick = m_CharacterControls.FindAction("Trick", throwIfNotFound: true);
     }
 
@@ -205,7 +205,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
     private List<ICharacterControlsActions> m_CharacterControlsActionsCallbackInterfaces = new List<ICharacterControlsActions>();
     private readonly InputAction m_CharacterControls_ChangeLine;
     private readonly InputAction m_CharacterControls_Jump;
-    private readonly InputAction m_CharacterControls_Doge;
+    private readonly InputAction m_CharacterControls_Dodge;
     private readonly InputAction m_CharacterControls_Trick;
     public struct CharacterControlsActions
     {
@@ -213,7 +213,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
         public CharacterControlsActions(@InputActionsPlayer wrapper) { m_Wrapper = wrapper; }
         public InputAction @ChangeLine => m_Wrapper.m_CharacterControls_ChangeLine;
         public InputAction @Jump => m_Wrapper.m_CharacterControls_Jump;
-        public InputAction @Doge => m_Wrapper.m_CharacterControls_Doge;
+        public InputAction @Dodge => m_Wrapper.m_CharacterControls_Dodge;
         public InputAction @Trick => m_Wrapper.m_CharacterControls_Trick;
         public InputActionMap Get() { return m_Wrapper.m_CharacterControls; }
         public void Enable() { Get().Enable(); }
@@ -230,9 +230,9 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
             @Jump.started += instance.OnJump;
             @Jump.performed += instance.OnJump;
             @Jump.canceled += instance.OnJump;
-            @Doge.started += instance.OnDoge;
-            @Doge.performed += instance.OnDoge;
-            @Doge.canceled += instance.OnDoge;
+            @Dodge.started += instance.OnDodge;
+            @Dodge.performed += instance.OnDodge;
+            @Dodge.canceled += instance.OnDodge;
             @Trick.started += instance.OnTrick;
             @Trick.performed += instance.OnTrick;
             @Trick.canceled += instance.OnTrick;
@@ -246,9 +246,9 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
             @Jump.started -= instance.OnJump;
             @Jump.performed -= instance.OnJump;
             @Jump.canceled -= instance.OnJump;
-            @Doge.started -= instance.OnDoge;
-            @Doge.performed -= instance.OnDoge;
-            @Doge.canceled -= instance.OnDoge;
+            @Dodge.started -= instance.OnDodge;
+            @Dodge.performed -= instance.OnDodge;
+            @Dodge.canceled -= instance.OnDodge;
             @Trick.started -= instance.OnTrick;
             @Trick.performed -= instance.OnTrick;
             @Trick.canceled -= instance.OnTrick;
@@ -273,7 +273,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
     {
         void OnChangeLine(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
-        void OnDoge(InputAction.CallbackContext context);
+        void OnDodge(InputAction.CallbackContext context);
         void OnTrick(InputAction.CallbackContext context);
     }
 }

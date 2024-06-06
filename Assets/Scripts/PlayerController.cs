@@ -8,25 +8,41 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float speed = 1f;
     [SerializeField] private float lineChangeSpeed = 1f;
     [SerializeField] private float gravityKoef = 3f;
+    [SerializeField] private float jumpForce = 1f;
+    [SerializeField] private float dodgeTime = 1f;
 
     private InputActionsPlayer inputActions;
     private CharacterController characterContrloller;
     private GameObject currentTrack;
 
     private Vector3 curPosition;
+    private Vector3 characterControllerNormalCenter;
+    private Vector3 characterControllerDodgeCenter = new Vector3(0f, -0.48f, 0f);
+
     private float gravity = -9.81f;
     private float velocity;
-    private int curLine;
     private float lineX;
     private float newX;
+    private float normalHeight;
+    private float dodgeHeight = 1f;
+    private int curLine;
+
+    private bool isJumping, isDoge;
+
 
     void Awake()
     {
         curLine = 2;
+        isJumping = false;
         characterContrloller = GetComponent<CharacterController>();
+        normalHeight = characterContrloller.height;
+        characterControllerNormalCenter = characterContrloller.center;
+        
         inputActions = new InputActionsPlayer();
 
         inputActions.CharacterControls.ChangeLine.performed += ChangeLine;
+        inputActions.CharacterControls.Jump.performed += Jump;
+        inputActions.CharacterControls.Dodge.performed += Dodge;
     }
 
     private void Start()
@@ -97,11 +113,43 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void Jump(InputAction.CallbackContext context)
+    {
+        if (characterContrloller.isGrounded && !isJumping && !isDoge)
+        {
+            isJumping = true;
+        }
+    }
+
+    private void Dodge(InputAction.CallbackContext context)
+    {
+        if(characterContrloller.isGrounded && !isJumping && !isDoge)
+        {
+            isDoge = true;
+            characterContrloller.height = dodgeHeight;
+            characterContrloller.center = characterControllerDodgeCenter;
+            StartCoroutine(Dodging());
+        }
+    }
+
+    private IEnumerator Dodging()
+    {
+        yield return new WaitForSeconds(dodgeTime);
+        isDoge = false;
+        characterContrloller.height = normalHeight;
+        characterContrloller.center = characterControllerNormalCenter;
+    }
+
     private void ApplyGravity()
     {
-        if (characterContrloller.isGrounded)
+        if (characterContrloller.isGrounded && !isJumping)
         {
             velocity = -1f;
+        }
+
+        else if (isJumping)
+        {
+            velocity += jumpForce;
         }
 
         else
@@ -112,11 +160,20 @@ public class PlayerController : MonoBehaviour
         curPosition.y = velocity;
     }
 
+    private void CheckForJumping()
+    {
+        if (!characterContrloller.isGrounded)
+        {
+            isJumping = false;
+        }
+    }
+
     private void FixedUpdate()
     {
         Run();
         MovingX();
         ApplyGravity();
+        CheckForJumping();
 
         characterContrloller.Move(curPosition * Time.fixedDeltaTime);
     }
