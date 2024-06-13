@@ -5,11 +5,14 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    [Header ("Налаштування фізики гравця")]
     [SerializeField] private float speed = 1f;
     [SerializeField] private float lineChangeSpeed = 1f;
     [SerializeField] private float gravityKoef = 3f;
     [SerializeField] private float jumpForce = 1f;
     [SerializeField] private float dodgeTime = 1f;
+    [Space]
+    [SerializeField] private Animator playerAnimator;
 
     private InputActionsPlayer inputActions;
     private CharacterController characterContrloller;
@@ -98,7 +101,7 @@ public class PlayerController : MonoBehaviour
     }
     private void Run()
     {
-        curPosition.z += speed; 
+        curPosition.z = speed; 
     }
 
     private void MovingX()
@@ -118,6 +121,7 @@ public class PlayerController : MonoBehaviour
         if (characterContrloller.isGrounded && !isJumping && !isDoge)
         {
             isJumping = true;
+            playerAnimator.SetBool("IsJumping", true);
         }
     }
 
@@ -128,6 +132,7 @@ public class PlayerController : MonoBehaviour
             isDoge = true;
             characterContrloller.height = dodgeHeight;
             characterContrloller.center = characterControllerDodgeCenter;
+            playerAnimator.SetBool("IsDashing", true);
             StartCoroutine(Dodging());
         }
     }
@@ -138,6 +143,7 @@ public class PlayerController : MonoBehaviour
         isDoge = false;
         characterContrloller.height = normalHeight;
         characterContrloller.center = characterControllerNormalCenter;
+        playerAnimator.SetBool("IsDashing", false);
     }
 
     private void ApplyGravity()
@@ -165,6 +171,8 @@ public class PlayerController : MonoBehaviour
         if (!characterContrloller.isGrounded)
         {
             isJumping = false;
+            playerAnimator.SetBool("IsJumping", false);
+
         }
     }
 
