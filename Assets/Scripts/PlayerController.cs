@@ -20,14 +20,16 @@ public class PlayerController : MonoBehaviour
 
     private Vector3 curPosition;
     private Vector3 characterControllerNormalCenter;
-    private Vector3 characterControllerDodgeCenter = new Vector3(0f, -0.48f, 0f);
+    private Vector3 characterControllerDodgeCenter = new Vector3(0f, -0.8f, 1f);
 
     private float gravity = -9.81f;
     private float velocity;
     private float lineX;
     private float newX;
     private float normalHeight;
-    private float dodgeHeight = 1f;
+    private float normalRadius;
+    private float dodgeHeight = 0.4f;
+    private float dodgeRadius = 0.1f;
     private int curLine;
 
     private bool isJumping, isDoge;
@@ -40,6 +42,7 @@ public class PlayerController : MonoBehaviour
         characterContrloller = GetComponent<CharacterController>();
         normalHeight = characterContrloller.height;
         characterControllerNormalCenter = characterContrloller.center;
+        normalRadius = characterContrloller.radius;
         
         inputActions = new InputActionsPlayer();
 
@@ -132,6 +135,7 @@ public class PlayerController : MonoBehaviour
             isDoge = true;
             characterContrloller.height = dodgeHeight;
             characterContrloller.center = characterControllerDodgeCenter;
+            characterContrloller.radius = dodgeRadius;
             playerAnimator.SetBool("IsDashing", true);
             StartCoroutine(Dodging());
         }
@@ -143,6 +147,8 @@ public class PlayerController : MonoBehaviour
         isDoge = false;
         characterContrloller.height = normalHeight;
         characterContrloller.center = characterControllerNormalCenter;
+        characterContrloller.radius = normalRadius;
+
         playerAnimator.SetBool("IsDashing", false);
     }
 
@@ -175,14 +181,48 @@ public class PlayerController : MonoBehaviour
 
         }
     }
+    
+    private void Lose()
+    {
+        characterContrloller.enabled = false;
+        isJumping = false;
+        isDoge = false;
+        playerAnimator.SetBool("IsJumping", false);
+        playerAnimator.SetBool("IsDashing", false);
+
+        playerAnimator.SetTrigger("Lose");
+    }
+
+    private void AnimationTrick(string triggerName)
+    {
+        characterContrloller.enabled = false;
+        playerAnimator.SetTrigger(triggerName);
+    }
 
     private void FixedUpdate()
     {
-        Run();
-        MovingX();
-        ApplyGravity();
-        CheckForJumping();
+        if (characterContrloller.enabled)
+        {
+            Run();
+            MovingX();
+            ApplyGravity();
+            CheckForJumping();
 
-        characterContrloller.Move(curPosition * Time.fixedDeltaTime);
+            characterContrloller.Move(curPosition * Time.fixedDeltaTime);
+        }
+         
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.tag == "Obstacle")
+        {
+            Lose();
+        }
+        else if(other.tag == "AnimationArea")
+        {
+            GetComponentInChildren<AnimationController>().AnimationEndPosition = other.gameObject.GetComponent<AnimationArea>().AnimationEndPosition;
+            AnimationTrick(other.GetComponent<AnimationArea>().GetTriggerName());
+        }
     }
 }
