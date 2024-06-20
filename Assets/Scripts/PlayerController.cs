@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float dodgeTime = 1f;
     [Space]
     [SerializeField] private Animator playerAnimator;
+    [SerializeField] private GameObject UIManager;
 
     private InputActionsPlayer inputActions;
     private CharacterController characterContrloller;
@@ -191,12 +192,20 @@ public class PlayerController : MonoBehaviour
         playerAnimator.SetBool("IsDashing", false);
 
         playerAnimator.SetTrigger("Lose");
+        UIManager.GetComponent<UIManager>().EnebleLosePanel();
+    }
+
+    private void Win()
+    {
+        characterContrloller.enabled = false;
+        UIManager.GetComponent<UIManager>().EnebleWinPanel();
     }
 
     private void AnimationTrick(string triggerName)
     {
         characterContrloller.enabled = false;
         playerAnimator.SetTrigger(triggerName);
+        UIManager.GetComponent<UIManager>().TrickScore += 1;
     }
 
     private void FixedUpdate()
@@ -219,10 +228,16 @@ public class PlayerController : MonoBehaviour
         {
             Lose();
         }
+
         else if(other.tag == "AnimationArea")
         {
             GetComponentInChildren<AnimationController>().AnimationEndPosition = other.gameObject.GetComponent<AnimationArea>().AnimationEndPosition;
             AnimationTrick(other.GetComponent<AnimationArea>().GetTriggerName());
+        }
+
+        else if(other.name == "WinArea")
+        {
+            Win();
         }
     }
 }
