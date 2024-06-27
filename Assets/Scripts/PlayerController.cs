@@ -232,6 +232,7 @@ public class PlayerController : MonoBehaviour
         else if(other.tag == "AnimationArea")
         {
             GetComponentInChildren<AnimationController>().AnimationEndPosition = other.gameObject.GetComponent<AnimationArea>().AnimationEndPosition;
+            other.gameObject.GetComponent<AnimationArea>().Render.SetActive(false);
             AnimationTrick(other.GetComponent<AnimationArea>().GetTriggerName());
         }
 

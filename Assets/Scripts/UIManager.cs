@@ -54,7 +54,7 @@ public class UIManager : MonoBehaviour
 
     private void ToMenu()
     {
-
+        SceneManager.LoadScene("MainMenu");
     }
 
     private void NextLevel()
